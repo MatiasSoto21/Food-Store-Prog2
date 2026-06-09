@@ -1,3 +1,6 @@
+package integrador.prog2.entities;
+import integrador.prog2.exception.InsufficientStockException;
+
 public class Producto extends Base {
 
     private String nombre;
@@ -12,6 +15,9 @@ public class Producto extends Base {
         setStock(stock);
         setImagen(imagen);
     }
+
+
+
 
     public String getNombre() {
         return nombre;

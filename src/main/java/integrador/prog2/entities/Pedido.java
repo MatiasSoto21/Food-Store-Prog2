@@ -1,5 +1,6 @@
 package integrador.prog2.entities;
 
+import integrador.prog2.enums.Estado;
 import integrador.prog2.enums.FormaPago;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class Pedido implements Calculable { //falta extender la clase padre
         if (cantidad == 0 || precio <= 0 || producto == null ) {
             throw new IllegalArgumentException("El  detalle tiene campos invalidos");
         }
-        detalles.add(new Producto(cantidad,precio,producto));//falta la clase Producto por eso da error
+        detalles.add(new DetallePedido(cantidad,precio, producto));//
     }
 
     public DetallePedido findDetallePedidoByProducto(Producto producto){
@@ -83,7 +84,7 @@ public class Pedido implements Calculable { //falta extender la clase padre
         DetallePedido busqueda = findDetallePedidoByProducto(producto);
 
         if (busqueda == null){
-            throw new RuntimeException("No se encontro el producto ingresado.")//no se si esta execpcion va o es otro tipo de excepcion
+            throw new RuntimeException("No se encontro el producto ingresado.");//no se si esta execpcion va o es otro tipo de excepcion
         } else {
             detalles.remove(busqueda);
         }

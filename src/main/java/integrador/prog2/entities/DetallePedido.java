@@ -14,6 +14,12 @@ public class DetallePedido { // falta heredar el padre
         this.subtotal = cantidad * producto.getPrecio();
     }
 
+    public DetallePedido(int cantidad, double subtotal, Producto producto) {
+        this.cantidad = cantidad;
+        this.subtotal = subtotal;
+        this.producto = producto;
+    }
+
     public int getCantidad() {
         return cantidad;
     }

@@ -1,3 +1,4 @@
+package integrador.prog2.entities;
 import java.util.ArrayList;
 
 public class Categoria extends Base {
