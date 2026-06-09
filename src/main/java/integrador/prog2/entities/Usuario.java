@@ -3,8 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package integrador.prog2.entities;
-
-import integrador.prog2.entities.Base;
+import integrador.prog2.enums.Rol;
 
 /**
  *
