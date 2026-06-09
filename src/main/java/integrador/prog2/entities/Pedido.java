@@ -1,5 +1,6 @@
 package integrador.prog2.entities;
 
+import integrador.prog2.enums.FormaPago;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
