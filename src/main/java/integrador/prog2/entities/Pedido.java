@@ -2,13 +2,14 @@ package integrador.prog2.entities;
 
 import integrador.prog2.enums.Estado;
 import integrador.prog2.enums.FormaPago;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//va a tirar error hasta que se creen todas las clases
-public class Pedido implements Calculable { //falta extender la clase padre
+
+public class Pedido extends Base implements Calculable {
     private LocalDate fecha;
     private Estado estado;
     private double total;
@@ -16,13 +17,18 @@ public class Pedido implements Calculable { //falta extender la clase padre
     private List<DetallePedido> detalles = new ArrayList<>(); // COMPOSICION
 
     public Pedido() {
+        super();
+        this.fecha = LocalDate.now();
+        this.estado = Estado.PENDIENTE;
+        this.total = 0;
     }
 
     public Pedido(LocalDate fecha, Estado estado, double total, FormaPago formaPago) {
-        this.fecha = fecha;
-        this.estado = estado;
-        this.total = total;
-        this.formaPago = formaPago;
+        super();
+        setFecha(fecha);
+        setEstado(estado);
+        setTotal(total);
+        setFormaPago(formaPago);
     }
 
     public LocalDate getFecha() {
@@ -30,6 +36,9 @@ public class Pedido implements Calculable { //falta extender la clase padre
     }
 
     public void setFecha(LocalDate fecha) {
+        if (fecha == null) {
+            throw new IllegalArgumentException("La fecha no puede ser nula");
+        }
         this.fecha = fecha;
     }
 
@@ -38,6 +47,9 @@ public class Pedido implements Calculable { //falta extender la clase padre
     }
 
     public void setEstado(Estado estado) {
+        if (estado == null) {
+            throw new IllegalArgumentException("El estado no puede ser nulo");
+        }
         this.estado = estado;
     }
 
@@ -46,6 +58,9 @@ public class Pedido implements Calculable { //falta extender la clase padre
     }
 
     public void setTotal(double total) {
+        if (total < 0) {
+            throw new IllegalArgumentException("El total no puede ser negativo");
+        }
         this.total = total;
     }
 
@@ -54,6 +69,9 @@ public class Pedido implements Calculable { //falta extender la clase padre
     }
 
     public void setFormaPago(FormaPago formaPago) {
+        if (formaPago == null) {
+            throw new IllegalArgumentException("La forma de pago no puede ser nula");
+        }
         this.formaPago = formaPago;
     }
 
@@ -61,37 +79,70 @@ public class Pedido implements Calculable { //falta extender la clase padre
         return Collections.unmodifiableList(detalles);
     }
 
-    public void addDetallePedido(int cantidad, double precio, Producto producto) {
-        if (cantidad == 0 || precio <= 0 || producto == null ) {
-            throw new IllegalArgumentException("El  detalle tiene campos invalidos");
+    public void addDetallePedido(int cantidad, Double precioUnitario, Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser nulo");
         }
-        detalles.add(new DetallePedido(cantidad,precio, producto));//
+
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        }
+
+        if (precioUnitario == null || precioUnitario <= 0) {
+            throw new IllegalArgumentException("El precio unitario debe ser mayor a cero");
+        }
+
+        producto.validarVenta(cantidad);
+        double subtotal = cantidad * precioUnitario;
+        DetallePedido detalle = new DetallePedido(cantidad, subtotal, producto);
+        detalles.add(detalle);
+
+        calcularTotal();
     }
 
-    public DetallePedido findDetallePedidoByProducto(Producto producto){
+    public DetallePedido findDetallePedidoByProducto(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser nulo");
+        }
+
         for (DetallePedido detalle : detalles)
-            if (detalle.getProducto().equals(producto)){
+            if (detalle.getProducto().equals(producto)) {
                 return detalle;
             }
         return null;
     }
 
     public void deleteDetallePedidoByProducto(Producto producto) {
-        if (producto == null) {
-            throw new IllegalArgumentException("El  detalle no puede ser nulo");
+        DetallePedido detalle = findDetallePedidoByProducto(producto);
+
+        if (detalle == null) {
+            throw new IllegalArgumentException("No se encontró un detalle con ese producto");
         }
 
-        DetallePedido busqueda = findDetallePedidoByProducto(producto);
-
-        if (busqueda == null){
-            throw new RuntimeException("No se encontro el producto ingresado.");//no se si esta execpcion va o es otro tipo de excepcion
-        } else {
-            detalles.remove(busqueda);
-        }
+        detalles.remove(detalle);
+        calcularTotal();
     }
 
     @Override
-    public void calcularTotal() { // falta implementar
-        System.out.println("Hola");
+    public void calcularTotal() {
+        double total = 0.0;
+
+        for (DetallePedido detalle : detalles) {
+            total += detalle.getSubtotal();
+        }
+
+        this.total = total;
+    }
+
+    @Override
+    public String toString() {
+        return "Pedido{" +
+                "id=" + getId() +
+                ", fecha=" + fecha +
+                ", estado=" + estado +
+                ", total=" + total +
+                ", formaPago=" + formaPago +
+                ", cantidadDetalles=" + detalles.size() +
+                '}';
     }
 }

@@ -1,11 +1,18 @@
 package integrador.prog2.entities;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Categoria extends Base {
 
     private String nombre;
     private String descripcion;
-    private ArrayList<Producto> productos;
+    private List<Producto> productos;
+
+    public Categoria() {
+        super();
+        this.productos = new ArrayList<>();
+    }
 
     public Categoria(String nombre, String descripcion) {
         super();
@@ -13,6 +20,8 @@ public class Categoria extends Base {
         setDescripcion(descripcion);
         this.productos = new ArrayList<>();
     }
+
+
 
     public String getNombre() {
         return nombre;
@@ -34,8 +43,8 @@ public class Categoria extends Base {
         this.descripcion = descripcion;
     }
 
-    public ArrayList<Producto> getProductos() {
-        return productos;
+    public List<Producto> getProductos() {
+        return Collections.unmodifiableList(productos);
     }
 
     public void agregarProducto(Producto producto) {
@@ -44,6 +53,14 @@ public class Categoria extends Base {
         }
 
         productos.add(producto);
+    }
+
+    public void eliminarProducto(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser nulo");
+        }
+
+        productos.remove(producto);
     }
 
     public void mostrarProductos() {
@@ -70,4 +87,6 @@ public class Categoria extends Base {
                 ", descripcion='" + descripcion + '\'' +
                 '}';
     }
+
+
 }
