@@ -1,23 +1,27 @@
 package integrador.prog2.entities;
 
 
-
-public class DetallePedido { // falta heredar el padre
+public class DetallePedido extends Base {
     private int cantidad;
     private double subtotal;
     private Producto producto;
 
-
-    public DetallePedido(int cantidad, Producto producto) {
-        this.cantidad = cantidad;
-        this.producto = producto;
-        this.subtotal = cantidad * producto.getPrecio();
+    public DetallePedido() {
+        super();
     }
 
     public DetallePedido(int cantidad, double subtotal, Producto producto) {
-        this.cantidad = cantidad;
-        this.subtotal = subtotal;
-        this.producto = producto;
+        super();
+        setCantidad(cantidad);
+        setProducto(producto);
+        setSubtotal(subtotal);
+    }
+
+    public DetallePedido(int cantidad, Producto producto) {
+        super();
+        setCantidad(cantidad);
+        setProducto(producto);
+        this.subtotal = cantidad * producto.getPrecio();
     }
 
     public int getCantidad() {
@@ -25,6 +29,9 @@ public class DetallePedido { // falta heredar el padre
     }
 
     public void setCantidad(int cantidad) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        }
         this.cantidad = cantidad;
     }
 
@@ -33,6 +40,9 @@ public class DetallePedido { // falta heredar el padre
     }
 
     public void setSubtotal(double subtotal) {
+        if (subtotal < 0) {
+            throw new IllegalArgumentException("El subtotal no puede ser negativo");
+        }
         this.subtotal = subtotal;
     }
 
@@ -41,15 +51,19 @@ public class DetallePedido { // falta heredar el padre
     }
 
     public void setProducto(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser nulo");
+        }
         this.producto = producto;
     }
 
     @Override
     public String toString() {
         return "DetallePedido{" +
-                "cantidad=" + cantidad +
+                "id=" + getId() +
+                ", cantidad=" + cantidad +
                 ", subtotal=" + subtotal +
-                ", producto=" + producto.getNombre() + // falta validar null
+                ", producto=" + (producto != null ? producto.getNombre() : "Sin producto") +
                 '}';
     }
 }

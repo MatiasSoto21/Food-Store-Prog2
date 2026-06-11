@@ -3,35 +3,41 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package integrador.prog2.entities;
+
 import integrador.prog2.enums.Rol;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
  * @author GUILLE
  */
 public class Usuario extends Base {
-    
+
     private String nombre;
     private String apellido;
     private String mail;
     private String celular;
     private String contraseña;
     private Rol rol;
+    private List<Pedido> pedidos = new ArrayList<>();
 
-    
+
     public Usuario() {
         super(); // Llama al constructor de Base para inicializar createdAt y eliminado
     }
 
     // Constructor completo
     public Usuario(Long id, String nombre, String apellido, String mail, String celular, String contraseña, Rol rol) {
-        super(id); // Pasa el id a la clase Base
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.mail = mail;
-        this.celular = celular;
-        this.contraseña = contraseña;
-        this.rol = rol;
+        super(id);
+        setNombre(nombre);
+        setApellido(apellido);
+        setMail(mail);
+        setCelular(celular);
+        setContraseña(contraseña);
+        setRol(rol);
     }
 
     // Getters y Setters
@@ -40,6 +46,9 @@ public class Usuario extends Base {
     }
 
     public void setNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
         this.nombre = nombre;
     }
 
@@ -48,6 +57,9 @@ public class Usuario extends Base {
     }
 
     public void setApellido(String apellido) {
+        if (apellido == null || apellido.trim().isEmpty()) {
+            throw new IllegalArgumentException("El apellido no puede estar vacío");
+        }
         this.apellido = apellido;
     }
 
@@ -56,6 +68,9 @@ public class Usuario extends Base {
     }
 
     public void setMail(String mail) {
+        if (mail == null || mail.trim().isEmpty()) {
+            throw new IllegalArgumentException("El mail no puede estar vacío");
+        }
         this.mail = mail;
     }
 
@@ -80,18 +95,40 @@ public class Usuario extends Base {
     }
 
     public void setRol(Rol rol) {
+        if (rol == null) {
+            throw new IllegalArgumentException("El rol no puede ser nulo");
+        }
         this.rol = rol;
     }
 
-    
+    public List<Pedido> getPedidos() {
+        return Collections.unmodifiableList(pedidos);
+    }
+
+    public void agregarPedido(Pedido pedido) {
+        if (pedido == null) {
+            throw new IllegalArgumentException("El pedido no puede ser nulo");
+        }
+
+        pedidos.add(pedido);
+    }
+
+    public void eliminarPedido(Pedido pedido) {
+        if (pedido == null) {
+            throw new IllegalArgumentException("El pedido no puede ser nulo");
+        }
+
+        pedidos.remove(pedido);
+    }
+
     @Override
     public String toString() {
-        return "Usuario [ID: " + getId() + 
-               " | Nombre: " + nombre + " " + apellido + 
-               " | Mail: " + mail + 
-               " | Celular: " + celular + 
-               " | Rol: " + rol + 
-               " | Creado: " + getCreatedAt() + "]";
+        return "Usuario [ID: " + getId() +
+                " | Nombre: " + nombre + " " + apellido +
+                " | Mail: " + mail +
+                " | Celular: " + celular +
+                " | Rol: " + rol +
+                " | Creado: " + getCreatedAt() + "]";
     }
 }
 

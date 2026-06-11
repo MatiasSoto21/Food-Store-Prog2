@@ -52,5 +52,14 @@ public abstract class Base {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    @Override
+    public String toString() {
+        return "Base{" +
+                "id=" + id +
+                ", eliminado=" + eliminado +
+                ", createdAt=" + createdAt +
+                '}';
+    }
 }
 

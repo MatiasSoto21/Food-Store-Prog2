@@ -5,8 +5,24 @@ public class Producto extends Base {
 
     private String nombre;
     private double precio;
+    private String descripcion;
     private int stock;
     private String imagen;
+    private boolean disponible;
+
+    public Producto() {
+        super();
+    }
+
+    public Producto(String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible) {
+        super();
+        setNombre(nombre);
+        setPrecio(precio);
+        setDescripcion(descripcion);
+        setStock(stock);
+        setImagen(imagen);
+        setDisponible(disponible);
+    }
 
     public Producto(String nombre, double precio, int stock, String imagen) {
         super();
@@ -16,8 +32,17 @@ public class Producto extends Base {
         setImagen(imagen);
     }
 
+    public String getDescripcion() {
+        return descripcion;
+    }
 
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
+    public void setDisponible(boolean disponible) {
+        this.disponible = disponible;
+    }
 
     public String getNombre() {
         return nombre;
@@ -64,12 +89,16 @@ public class Producto extends Base {
     }
 
     public boolean isDisponible() {
-        return stock > 0;
+        return disponible;
     }
 
     public void validarVenta(Integer cantidad) {
         if (cantidad == null || cantidad <= 0) {
             throw new IllegalArgumentException("Cantidad inválida");
+        }
+
+        if (!disponible) {
+            throw new IllegalArgumentException("El producto no está disponible");
         }
 
         if (cantidad > stock) {
@@ -83,6 +112,7 @@ public class Producto extends Base {
         this.stock -= cantidad;
 
         if (this.stock == 0) {
+            this.disponible = false;
             System.out.println("ALERTA: El producto '" + nombre + "' se agotó.");
         }
     }
