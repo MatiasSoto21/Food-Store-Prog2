@@ -1,69 +1,60 @@
 package integrador.prog2.entities;
+import static integrador.prog2.entities.Validador.*;
 
 
 public class DetallePedido extends Base {
     private int cantidad;
-    private double subtotal;
+    private Double subtotal;
     private Producto producto;
-
-    public DetallePedido() {
-        super();
-    }
-
-    public DetallePedido(int cantidad, double subtotal, Producto producto) {
-        super();
-        setCantidad(cantidad);
-        setProducto(producto);
-        setSubtotal(subtotal);
-    }
 
     public DetallePedido(int cantidad, Producto producto) {
         super();
         setCantidad(cantidad);
-        setProducto(producto);
-        this.subtotal = cantidad * producto.getPrecio();
+        objetoNulo(producto,"producto");
+        
+        producto.validarVenta(cantidad);
+        
+        this.producto = producto;
+        
+        calcularSubtotal();
     }
 
     public int getCantidad() {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
-        }
-        this.cantidad = cantidad;
-    }
-
-    public double getSubtotal() {
+    public Double getSubtotal() {
         return subtotal;
     }
 
-    public void setSubtotal(double subtotal) {
-        if (subtotal < 0) {
-            throw new IllegalArgumentException("El subtotal no puede ser negativo");
+    public void setCantidad(int cantidad) {
+        //mayorQueCero(cantidad,"cantidad");
+        this.cantidad = cantidad;
+    }
+
+    @Override
+    public String toString() {
+        return "DetallePedido{" + "cantidad=" + cantidad + ", subtotal=" + subtotal + '}';
+    }
+    
+    public boolean validar(Producto producto){
+        objetoNulo(producto,"producto");
+        if (producto.getDisponible()){
+            System.out.println("Hay stock disponible para validar la compra");
+            return cantidad<= producto.getStock();
+        }else{
+            System.out.println("No hay stock en este momento.(stock actual 0)");
+            return false;
         }
-        this.subtotal = subtotal;
+    }
+    
+    public void calcularSubtotal(){
+        this.subtotal = cantidad * producto.getPrecio();
     }
 
     public Producto getProducto() {
         return producto;
     }
-
-    public void setProducto(Producto producto) {
-        if (producto == null) {
-            throw new IllegalArgumentException("El producto no puede ser nulo");
-        }
-        this.producto = producto;
-    }
-
-    @Override
-    public String toString() {
-        return "DetallePedido{" +
-                "id=" + getId() +
-                ", cantidad=" + cantidad +
-                ", subtotal=" + subtotal +
-                ", producto=" + (producto != null ? producto.getNombre() : "Sin producto") +
-                '}';
-    }
+    
 }
+

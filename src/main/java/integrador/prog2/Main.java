@@ -8,106 +8,67 @@ import integrador.prog2.enums.Rol;
 public class Main {
     public static void main(String[] args) {
 
+         System.out.println("Paso 1");
+
+        Categoria lacteos = new Categoria("Lacteos","Leches y derivados");
+        Categoria panaderia = new Categoria("Panaderia","Productos de panificacion");
+        Producto leche = new Producto("Leche Entera",1500.0,"Leche marca X",0,"leche.jpg");
+        Producto yogur =new Producto("Yogur",1200.0,"Yogur frutilla",10,"yogur.jpg");
+        Producto pan = new Producto("Pan flauta",1000.0,"Pan",8,"pan.jpg");
+        Producto facturas = new Producto("Facturas",300.0,"Docena de facturas",2,"facturas.jpg");
+
+        lacteos.agregarProducto(leche);
+        lacteos.agregarProducto(yogur);
+        panaderia.agregarProducto(pan);
+        panaderia.agregarProducto(facturas);
+
+        System.out.println(leche);
+        System.out.println(yogur);
+        System.out.println(pan);
+        System.out.println(facturas);
+
+        System.out.println("Paso 2");
+
+        Pedido pedido =new Pedido(FormaPago.EFECTIVO);
+
+        System.out.println(pedido);
+
+        System.out.println("Paso 3");
+
         try {
-            // Crear categorías
-            Categoria hamburguesas = new Categoria("Hamburguesas", "Comida rápida");
-            Categoria bebidas = new Categoria("Bebidas", "Gaseosas y aguas");
-
-            hamburguesas.setId(1L);
-            bebidas.setId(2L);
-
-            // Crear productos
-            Producto burger = new Producto(
-                    "Smash Burger",
-                    7500,
-                    "Hamburguesa doble smash",
-                    10,
-                    "burger.jpg",
-                    true
-            );
-            burger.setId(1L);
-
-            Producto coca = new Producto(
-                    "Coca Cola",
-                    2000,
-                    "Gaseosa 500ml",
-                    20,
-                    "coca.jpg",
-                    true
-            );
-            coca.setId(2L);
-
-            // Asociar productos a categorías
-            hamburguesas.agregarProducto(burger);
-            bebidas.agregarProducto(coca);
-
-            System.out.println("=== CATEGORÍAS ===");
-            System.out.println(hamburguesas);
-            System.out.println(bebidas);
-
-            System.out.println();
-
-            System.out.println("=== PRODUCTOS DE HAMBURGUESAS ===");
-            for (Producto producto : hamburguesas.getProductos()) {
-                System.out.println(producto);
-            }
-
-            System.out.println();
-
-            // Crear usuario
-            Usuario usuario = new Usuario(
-                    1L,
-                    "Matias",
-                    "Soto",
-                    "matias@gmail.com",
-                    "2611234567",
-                    "1234",
-                    Rol.USUARIO
-            );
-
-            System.out.println("=== USUARIO ===");
-            System.out.println(usuario);
-
-            System.out.println();
-
-            // Crear pedido
-            Pedido pedido = new Pedido();
-            pedido.setId(1L);
-            pedido.setFormaPago(FormaPago.EFECTIVO);
-            pedido.setEstado(Estado.PENDIENTE);
-
-            // Agregar detalles // van a salir con id null pero supuestamente con sql los genera bien.
-            pedido.addDetallePedido(2, burger.getPrecio(), burger);
-            pedido.addDetallePedido(3, coca.getPrecio(), coca);
-
-            // Asociar pedido al usuario
-            usuario.agregarPedido(pedido);
-
-            System.out.println("=== PEDIDO ===");
-            System.out.println(pedido);
-
-            System.out.println();
-
-            System.out.println("=== DETALLES DEL PEDIDO ===");
-            for (DetallePedido detalle : pedido.getDetalles()) {
-                System.out.println(detalle);
-            }
-
-            System.out.println();
-
-            System.out.println("=== STOCK ACTUALIZADO ===");
-            System.out.println(burger);
-            System.out.println(coca);
-
-            System.out.println();
-
-            System.out.println("=== PEDIDOS DEL USUARIO ===");
-            for (Pedido p : usuario.getPedidos()) {
-                System.out.println(p);
-            }
+            pedido.addDetallePedido(0,leche);
 
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+                System.out.println("ERROR CAPTURADO: "+ e.getMessage());
         }
+        //mensaje de error para validad venta con funcion de stockInsucienteException
+        //leche.validarVenta(0);
+        // leche.validarDisponibilidad();
+        
+
+        System.out.println();
+        System.out.println("Paso 4");
+
+        try{
+            pedido.addDetallePedido(2,facturas);
+        }catch (Exception e){
+            System.out.println("ERROR CAPTURADO: "+ e.getMessage());
+        }
+
+        System.out.println("Producto actualizado:");
+
+        System.out.println(facturas);
+        
+        System.out.println();
+        
+        System.out.println("Pedido actualizado:");
+        
+        System.out.println(pedido);
+
+        System.out.println();
+        System.out.println("Paso 5");
+
+        System.out.println(pedido);
+
     }
 }

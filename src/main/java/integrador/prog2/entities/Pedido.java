@@ -2,147 +2,117 @@ package integrador.prog2.entities;
 
 import integrador.prog2.enums.Estado;
 import integrador.prog2.enums.FormaPago;
-
+import integrador.prog2.interfaces.Calculable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import static integrador.prog2.entities.Validador.*;
 
 
 public class Pedido extends Base implements Calculable {
+
     private LocalDate fecha;
     private Estado estado;
-    private double total;
+    private Double total;
     private FormaPago formaPago;
-    private List<DetallePedido> detalles = new ArrayList<>(); // COMPOSICION
+    private List<DetallePedido> detalles = new ArrayList<>();
 
-    public Pedido() {
+    public Pedido(FormaPago formaPago) {
         super();
-        this.fecha = LocalDate.now();
         this.estado = Estado.PENDIENTE;
-        this.total = 0;
-    }
-
-    public Pedido(LocalDate fecha, Estado estado, double total, FormaPago formaPago) {
-        super();
-        setFecha(fecha);
-        setEstado(estado);
-        setTotal(total);
-        setFormaPago(formaPago);
+        this.total = 0.0;
+        this.formaPago = formaPago;
+        this.fecha = LocalDate.now();
     }
 
     public LocalDate getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDate fecha) {
-        if (fecha == null) {
-            throw new IllegalArgumentException("La fecha no puede ser nula");
-        }
-        this.fecha = fecha;
-    }
-
     public Estado getEstado() {
         return estado;
     }
 
-    public void setEstado(Estado estado) {
-        if (estado == null) {
-            throw new IllegalArgumentException("El estado no puede ser nulo");
-        }
-        this.estado = estado;
-    }
-
-    public double getTotal() {
+    public Double getTotal() {
         return total;
-    }
-
-    public void setTotal(double total) {
-        if (total < 0) {
-            throw new IllegalArgumentException("El total no puede ser negativo");
-        }
-        this.total = total;
     }
 
     public FormaPago getFormaPago() {
         return formaPago;
     }
 
-    public void setFormaPago(FormaPago formaPago) {
-        if (formaPago == null) {
-            throw new IllegalArgumentException("La forma de pago no puede ser nula");
-        }
-        this.formaPago = formaPago;
-    }
-
     public List<DetallePedido> getDetalles() {
         return Collections.unmodifiableList(detalles);
     }
 
-    public void addDetallePedido(int cantidad, Double precioUnitario, Producto producto) {
-        if (producto == null) {
-            throw new IllegalArgumentException("El producto no puede ser nulo");
+    public void setEstado(Estado estado) {
+        this.estado = estado;
+    }
+
+    public void setFormaPago(FormaPago formaPago) {
+        this.formaPago = formaPago;
+    }
+
+    public void addDetallePedido(int cantidad, Producto producto) {
+        DetallePedido detalleP = new DetallePedido(cantidad, producto);
+        detalles.add(detalleP);
+        if (detalles.size() != 0 && estado == Estado.PENDIENTE) {
+            estado = Estado.PENDIENTE;
         }
-
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
-        }
-
-        if (precioUnitario == null || precioUnitario <= 0) {
-            throw new IllegalArgumentException("El precio unitario debe ser mayor a cero");
-        }
-
-        producto.validarVenta(cantidad);
-        double subtotal = cantidad * precioUnitario;
-        DetallePedido detalle = new DetallePedido(cantidad, subtotal, producto);
-        detalles.add(detalle);
-
         calcularTotal();
     }
 
     public DetallePedido findDetallePedidoByProducto(Producto producto) {
-        if (producto == null) {
-            throw new IllegalArgumentException("El producto no puede ser nulo");
-        }
+        objetoNulo(producto,"producto");
 
-        for (DetallePedido detalle : detalles)
+        for (DetallePedido detalle : detalles) {
+
             if (detalle.getProducto().equals(producto)) {
+                System.out.println("Se encontro");
                 return detalle;
             }
+        }
+        System.out.println("No se encontro");
         return null;
     }
 
     public void deleteDetallePedidoByProducto(Producto producto) {
+
         DetallePedido detalle = findDetallePedidoByProducto(producto);
 
-        if (detalle == null) {
-            throw new IllegalArgumentException("No se encontró un detalle con ese producto");
+        if (detalle != null) {
+            System.out.println("Se borro el detalle");
+            producto.aumentarStock(detalle.getCantidad());
+            
+            detalles.remove(detalle);
+            calcularTotal();
+            if (detalles.isEmpty()) {
+                estado = Estado.PENDIENTE;
+            }
+        } else {
+            System.out.println("No se encontro el detalle para borrar");
         }
+    }
 
-        detalles.remove(detalle);
-        calcularTotal();
+    public void validarPedido() {
+        if (detalles.isEmpty()) {
+            throw new IllegalArgumentException("El pedido no posee detalles");
+        }
+        estado = Estado.CONFIRMADO;
     }
 
     @Override
     public void calcularTotal() {
-        double total = 0.0;
+        total = 0.0;
 
         for (DetallePedido detalle : detalles) {
             total += detalle.getSubtotal();
         }
-
-        this.total = total;
     }
 
     @Override
     public String toString() {
-        return "Pedido{" +
-                "id=" + getId() +
-                ", fecha=" + fecha +
-                ", estado=" + estado +
-                ", total=" + total +
-                ", formaPago=" + formaPago +
-                ", cantidadDetalles=" + detalles.size() +
-                '}';
+        return "Pedido{" + "fecha=" + fecha + ", estado=" + estado + ", total=" + total + ", formaPago=" + formaPago + ", detalles=" + detalles + '}';
     }
 }

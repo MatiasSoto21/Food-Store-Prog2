@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package integrador.prog2.entities;
 
 import integrador.prog2.enums.Rol;
@@ -10,10 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- *
- * @author GUILLE
- */
 public class Usuario extends Base {
 
     private String nombre;
@@ -24,14 +16,9 @@ public class Usuario extends Base {
     private Rol rol;
     private List<Pedido> pedidos = new ArrayList<>();
 
-
-    public Usuario() {
-        super(); // Llama al constructor de Base para inicializar createdAt y eliminado
-    }
-
     // Constructor completo
-    public Usuario(Long id, String nombre, String apellido, String mail, String celular, String contraseña, Rol rol) {
-        super(id);
+    public Usuario(String nombre, String apellido, String mail, String celular, String contraseña, Rol rol) {
+        super();
         setNombre(nombre);
         setApellido(apellido);
         setMail(mail);
