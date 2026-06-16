@@ -4,7 +4,13 @@ public class Categoria extends Base {
 
     private String nombre;
     private String descripcion;
-    private ArrayList<Producto> productos;
+    private List<Producto> productos;
+
+    // constructor de mas
+    public Categoria() {
+        super();
+        this.productos = new ArrayList<>();
+    }
 
     public Categoria(String nombre, String descripcion) {
         super();
@@ -62,6 +68,7 @@ public class Categoria extends Base {
     }
 
     @Override
+    // podria mostrar los productos o la cnatidad de productos
     public String toString() {
         return "Categoria{" +
                 "id=" + getId() +

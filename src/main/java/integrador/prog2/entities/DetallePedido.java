@@ -7,6 +7,20 @@ public class DetallePedido { // falta heredar el padre
     private double subtotal;
     private Producto producto;
 
+<<<<<<< Updated upstream
+=======
+    // constrcutor vacio
+    public DetallePedido() {
+        super();
+    }
+
+    public DetallePedido(int cantidad, double subtotal, Producto producto) {
+        super();
+        setCantidad(cantidad);
+        setProducto(producto);
+        setSubtotal(subtotal);
+    }
+>>>>>>> Stashed changes
 
     public DetallePedido(int cantidad, Producto producto) {
         this.cantidad = cantidad;
@@ -26,6 +40,7 @@ public class DetallePedido { // falta heredar el padre
         return subtotal;
     }
 
+    //se deberia calcular automaticamente
     public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
     }
@@ -39,6 +54,7 @@ public class DetallePedido { // falta heredar el padre
     }
 
     @Override
+    // al pedo prodcuto, ya tiene toString en producto
     public String toString() {
         return "DetallePedido{" +
                 "cantidad=" + cantidad +

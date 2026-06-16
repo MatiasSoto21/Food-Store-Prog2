@@ -15,6 +15,7 @@ public class Pedido implements Calculable { //falta extender la clase padre
 
     public Pedido() {
     }
+    // hay 2 constrcutores
 
     public Pedido(LocalDate fecha, Estado estado, double total, FormaPago formaPago) {
         this.fecha = fecha;
@@ -27,6 +28,7 @@ public class Pedido implements Calculable { //falta extender la clase padre
         return fecha;
     }
 
+    //setter al pedo
     public void setFecha(LocalDate fecha) {
         this.fecha = fecha;
     }
@@ -35,6 +37,7 @@ public class Pedido implements Calculable { //falta extender la clase padre
         return estado;
     }
 
+    ///setter al pedo
     public void setEstado(Estado estado) {
         this.estado = estado;
     }
@@ -89,7 +92,31 @@ public class Pedido implements Calculable { //falta extender la clase padre
     }
 
     @Override
+<<<<<<< Updated upstream
     public void calcularTotal() { // falta implementar
         System.out.println("Hola");
+=======
+    public void calcularTotal() {
+        double total = 0.0;
+
+        for (DetallePedido detalle : detalles) {
+            total += detalle.getSubtotal();
+        }
+
+        this.total = total;
+    }
+
+    @Override
+    // cantidad detalles esta bien, o se puede hacer una descripcion de los detalles. preguntar al profesor.
+    public String toString() {
+        return "Pedido{" +
+                "id=" + getId() +
+                ", fecha=" + fecha +
+                ", estado=" + estado +
+                ", total=" + total +
+                ", formaPago=" + formaPago +
+                ", cantidadDetalles=" + detalles.size() +
+                '}';
+>>>>>>> Stashed changes
     }
 }
