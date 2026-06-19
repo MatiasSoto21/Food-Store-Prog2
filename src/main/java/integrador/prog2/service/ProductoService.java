@@ -16,15 +16,16 @@ public class ProductoService implements GenericService<Producto> {
 
     @Override
     public Producto crear(Producto producto) throws SQLException {
-        validarProducto(producto);
+        throw new UnsupportedOperationException("Para crear un producto se debe indicar una categoría");
+    }
 
-        if (!productoDAO.existeCategoria(producto.getCategoria().getId())) {
-            throw new IllegalArgumentException("No existe una categoría activa con id " + producto.getCategoria().getId());
-        }
+    public Producto crear(Producto producto, Long idCategoria) throws SQLException {
+        validarProducto(producto);
+        validarCategoriaSiExiste(idCategoria);
 
         producto.setNombre(producto.getNombre().trim());
 
-        return productoDAO.crear(producto);
+        return productoDAO.crear(producto, idCategoria);
     }
 
     @Override
@@ -45,6 +46,10 @@ public class ProductoService implements GenericService<Producto> {
         return productoDAO.listar();
     }
 
+    public List<String> listarResumenProductos() throws SQLException {
+        return productoDAO.listarResumenProductos();
+    }
+
     public List<Producto> listarPorCategoria(Long idCategoria) throws SQLException {
         validarId(idCategoria);
 
@@ -60,19 +65,23 @@ public class ProductoService implements GenericService<Producto> {
         validarProducto(producto);
         validarId(producto.getId());
 
+        return actualizar(producto, productoDAO.obtenerIdCategoria(producto.getId()));
+    }
+
+    public Producto actualizar(Producto producto, Long idCategoria) throws SQLException {
+        validarProducto(producto);
+        validarId(producto.getId());
+        validarCategoriaSiExiste(idCategoria);
+
         Producto productoExistente = productoDAO.leer(producto.getId());
 
         if (productoExistente == null) {
             throw new IllegalArgumentException("No existe un producto activo con id " + producto.getId());
         }
 
-        if (!productoDAO.existeCategoria(producto.getCategoria().getId())) {
-            throw new IllegalArgumentException("No existe una categoría activa con id " + producto.getCategoria().getId());
-        }
-
         producto.setNombre(producto.getNombre().trim());
 
-        Producto actualizado = productoDAO.actualizar(producto);
+        Producto actualizado = productoDAO.actualizar(producto, idCategoria);
 
         if (actualizado == null) {
             throw new IllegalArgumentException("No se pudo actualizar el producto");
@@ -94,6 +103,13 @@ public class ProductoService implements GenericService<Producto> {
         productoDAO.eliminar(id);
     }
 
+    public Long obtenerIdCategoria(Long idProducto) throws SQLException {
+        validarId(idProducto);
+        leer(idProducto);
+
+        return productoDAO.obtenerIdCategoria(idProducto);
+    }
+
     private void validarProducto(Producto producto) {
         if (producto == null) {
             throw new IllegalArgumentException("El producto no puede ser nulo");
@@ -110,9 +126,13 @@ public class ProductoService implements GenericService<Producto> {
         if (producto.getStock() < 0) {
             throw new IllegalArgumentException("El stock no puede ser negativo");
         }
+    }
 
-        if (producto.getCategoria() == null || producto.getCategoria().getId() == null) {
-            throw new IllegalArgumentException("El producto debe tener una categoría válida");
+    private void validarCategoriaSiExiste(Long idCategoria) throws SQLException {
+        validarId(idCategoria);
+
+        if (!productoDAO.existeCategoria(idCategoria)) {
+            throw new IllegalArgumentException("No existe una categoría activa con id " + idCategoria);
         }
     }
 

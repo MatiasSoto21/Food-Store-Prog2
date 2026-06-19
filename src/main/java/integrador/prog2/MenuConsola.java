@@ -133,8 +133,8 @@ public class MenuConsola {
             System.out.println("Categoría actual:");
             System.out.println(categoria);
 
-            String nuevoNombre = leerTexto("Nuevo nombre: ");
-            String nuevaDescripcion = leerTexto("Nueva descripción: ");
+            String nuevoNombre = leerTexto("Nuevo nombre [actual: " + categoria.getNombre() + "]: ");
+            String nuevaDescripcion = leerTexto("Nueva descripción [actual: " + categoria.getDescripcion() + "]: ");
 
             categoria.setNombre(nuevoNombre);
             categoria.setDescripcion(nuevaDescripcion);
@@ -212,7 +212,7 @@ public class MenuConsola {
 
     private void listarProductos() {
         try {
-            List<Producto> productos = productoService.listar();
+            List<String> productos = productoService.listarResumenProductos();
 
             System.out.println();
             System.out.println("=== LISTADO DE PRODUCTOS ===");
@@ -222,7 +222,7 @@ public class MenuConsola {
                 return;
             }
 
-            for (Producto producto : productos) {
+            for (String producto : productos) {
                 System.out.println(producto);
             }
 
@@ -264,7 +264,18 @@ public class MenuConsola {
             System.out.println();
             System.out.println("=== CREAR PRODUCTO ===");
 
-            listarCategorias();
+            List<Categoria> categorias = categoriaService.listar();
+
+            if (categorias.isEmpty()) {
+                System.out.println("No hay categorías cargadas. Primero debe crear una categoría.");
+                return;
+            }
+
+            System.out.println();
+            System.out.println("Categorías disponibles:");
+            for (Categoria categoria : categorias) {
+                System.out.println(categoria);
+            }
 
             String nombre = leerTexto("Nombre: ");
             double precio = leerDouble("Precio: ");
@@ -274,19 +285,16 @@ public class MenuConsola {
             boolean disponible = leerBoolean("¿Disponible? (S/N): ");
             Long idCategoria = leerLong("Id categoría: ");
 
-            Categoria categoria = categoriaService.leer(idCategoria);
-
             Producto producto = new Producto(
                     nombre,
                     precio,
                     descripcion,
                     stock,
                     imagen,
-                    disponible,
-                    categoria
+                    disponible
             );
 
-            productoService.crear(producto);
+            productoService.crear(producto, idCategoria);
 
             System.out.println("Producto creado correctamente con id: " + producto.getId());
 
@@ -312,27 +320,50 @@ public class MenuConsola {
             System.out.println("Producto actual:");
             System.out.println(producto);
 
+            Long idCategoriaActual = productoService.obtenerIdCategoria(producto.getId());
+            System.out.println("Categoría actual id: " + (idCategoriaActual == null ? "Sin categoría" : idCategoriaActual));
+
             listarCategorias();
 
-            String nombre = leerTexto("Nuevo nombre: ");
-            double precio = leerDouble("Nuevo precio: ");
-            String descripcion = leerTexto("Nueva descripción: ");
-            int stock = leerEntero("Nuevo stock: ");
-            String imagen = leerTexto("Nueva imagen: ");
-            boolean disponible = leerBoolean("¿Disponible? (S/N): ");
-            Long idCategoria = leerLong("Nueva categoría id: ");
+            String nombre = leerTexto("Nuevo nombre [actual: " + producto.getNombre() + "] (Enter para mantener): ");
+            Double precio = leerDoubleOpcional("Nuevo precio [actual: " + producto.getPrecio() + "] (Enter para mantener): ");
+            String descripcion = leerTexto("Nueva descripción [actual: " + producto.getDescripcion() + "] (Enter para mantener): ");
+            Integer stock = leerEnteroOpcional("Nuevo stock [actual: " + producto.getStock() + "] (Enter para mantener): ");
+            String imagen = leerTexto("Nueva imagen [actual: " + producto.getImagen() + "] (Enter para mantener): ");
+            Boolean disponible = leerBooleanOpcional("¿Disponible? [actual: " + (producto.isDisponible() ? "S" : "N") + "] (S/N o Enter para mantener): ");
+            Long idCategoria = leerLongOpcional("Nueva categoría id [actual: " + idCategoriaActual + "] (Enter para mantener): ");
 
-            Categoria categoria = categoriaService.leer(idCategoria);
+            if (!nombre.trim().isEmpty()) {
+                producto.setNombre(nombre);
+            }
 
-            producto.setNombre(nombre);
-            producto.setPrecio(precio);
-            producto.setDescripcion(descripcion);
-            producto.setStock(stock);
-            producto.setImagen(imagen);
-            producto.setDisponible(disponible);
-            producto.setCategoria(categoria);
+            if (precio != null) {
+                producto.setPrecio(precio);
+            }
 
-            productoService.actualizar(producto);
+            if (!descripcion.trim().isEmpty()) {
+                producto.setDescripcion(descripcion);
+            }
+
+            if (stock != null) {
+                producto.setStock(stock);
+            }
+
+            if (!imagen.trim().isEmpty()) {
+                producto.setImagen(imagen);
+            }
+
+            if (disponible != null) {
+                producto.setDisponible(disponible);
+            }
+
+            Long idCategoriaFinal = idCategoriaActual;
+
+            if (idCategoria != null) {
+                idCategoriaFinal = idCategoria;
+            }
+
+            productoService.actualizar(producto, idCategoriaFinal);
 
             System.out.println("Producto actualizado correctamente.");
 
@@ -470,11 +501,11 @@ public class MenuConsola {
             System.out.println("Usuario actual:");
             System.out.println(usuario);
 
-            String nombre = leerTexto("Nuevo nombre: ");
-            String apellido = leerTexto("Nuevo apellido: ");
-            String mail = leerTexto("Nuevo mail: ");
-            String celular = leerTexto("Nuevo celular: ");
-            String contrasena = leerTexto("Nueva contraseña: ");
+            String nombre = leerTexto("Nuevo nombre [actual: " + usuario.getNombre() + "]: ");
+            String apellido = leerTexto("Nuevo apellido [actual: " + usuario.getApellido() + "]: ");
+            String mail = leerTexto("Nuevo mail [actual: " + usuario.getMail() + "]: ");
+            String celular = leerTexto("Nuevo celular [actual: " + usuario.getCelular() + "]: ");
+            String contrasena = leerTexto("Nueva contraseña [actual: " + usuario.getContraseña() + "]: ");
             Rol rol = leerRol();
 
             usuario.setNombre(nombre);
@@ -835,6 +866,24 @@ public class MenuConsola {
         }
     }
 
+    private Long leerLongOpcional(String mensaje) {
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                String valor = scanner.nextLine();
+
+                if (valor.trim().isEmpty()) {
+                    return null;
+                }
+
+                return Long.parseLong(valor);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Debe ingresar un número válido o Enter para omitir.");
+            }
+        }
+    }
+
     private double leerDouble(String mensaje) {
         while (true) {
             try {
@@ -843,6 +892,42 @@ public class MenuConsola {
 
             } catch (NumberFormatException e) {
                 System.out.println("Debe ingresar un número válido.");
+            }
+        }
+    }
+
+    private Double leerDoubleOpcional(String mensaje) {
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                String valor = scanner.nextLine();
+
+                if (valor.trim().isEmpty()) {
+                    return null;
+                }
+
+                return Double.parseDouble(valor);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Debe ingresar un número válido o Enter para omitir.");
+            }
+        }
+    }
+
+    private Integer leerEnteroOpcional(String mensaje) {
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                String valor = scanner.nextLine();
+
+                if (valor.trim().isEmpty()) {
+                    return null;
+                }
+
+                return Integer.parseInt(valor);
+
+            } catch (NumberFormatException e) {
+                System.out.println("Debe ingresar un número entero o Enter para omitir.");
             }
         }
     }
@@ -861,6 +946,27 @@ public class MenuConsola {
             }
 
             System.out.println("Debe ingresar S o N.");
+        }
+    }
+
+    private Boolean leerBooleanOpcional(String mensaje) {
+        while (true) {
+            System.out.print(mensaje);
+            String valor = scanner.nextLine();
+
+            if (valor.trim().isEmpty()) {
+                return null;
+            }
+
+            if (valor.equalsIgnoreCase("S")) {
+                return true;
+            }
+
+            if (valor.equalsIgnoreCase("N")) {
+                return false;
+            }
+
+            System.out.println("Debe ingresar S, N o Enter para omitir.");
         }
     }
 

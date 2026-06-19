@@ -1,7 +1,6 @@
 package integrador.prog2.dao;
 
 import integrador.prog2.config.ConexionDB;
-import integrador.prog2.entities.Categoria;
 import integrador.prog2.entities.Producto;
 
 import java.sql.*;
@@ -12,6 +11,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
 
     @Override
     public Producto crear(Producto producto) throws SQLException {
+        throw new UnsupportedOperationException("Para crear un producto se debe usar crear(Producto producto, Long idCategoria)");
+    }
+
+    public Producto crear(Producto producto, Long idCategoria) throws SQLException {
         String sql = """
                 INSERT INTO producto (nombre, precio, descripcion, stock, imagen, disponible, id_categoria)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -26,7 +29,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
             ps.setInt(4, producto.getStock());
             ps.setString(5, producto.getImagen());
             ps.setBoolean(6, producto.isDisponible());
-            ps.setLong(7, producto.getCategoria().getId());
+            ps.setLong(7, idCategoria);
 
             ps.executeUpdate();
 
@@ -52,14 +55,8 @@ public class ProductoDAO implements GenericDAO<Producto> {
                     p.imagen,
                     p.disponible,
                     p.eliminado AS producto_eliminado,
-                    p.created_at AS producto_created_at,
-                    c.id AS categoria_id,
-                    c.nombre AS categoria_nombre,
-                    c.descripcion AS categoria_descripcion,
-                    c.eliminado AS categoria_eliminado,
-                    c.created_at AS categoria_created_at
+                    p.created_at AS producto_created_at
                 FROM producto p
-                INNER JOIN categoria c ON p.id_categoria = c.id
                 WHERE p.id = ? AND p.eliminado = false
                 """;
 
@@ -90,14 +87,8 @@ public class ProductoDAO implements GenericDAO<Producto> {
                     p.imagen,
                     p.disponible,
                     p.eliminado AS producto_eliminado,
-                    p.created_at AS producto_created_at,
-                    c.id AS categoria_id,
-                    c.nombre AS categoria_nombre,
-                    c.descripcion AS categoria_descripcion,
-                    c.eliminado AS categoria_eliminado,
-                    c.created_at AS categoria_created_at
+                    p.created_at AS producto_created_at
                 FROM producto p
-                INNER JOIN categoria c ON p.id_categoria = c.id
                 WHERE p.eliminado = false
                 ORDER BY p.id
                 """;
@@ -116,6 +107,54 @@ public class ProductoDAO implements GenericDAO<Producto> {
         return productos;
     }
 
+    public List<String> listarResumenProductos() throws SQLException {
+        String sql = """
+            SELECT 
+                p.id,
+                p.nombre,
+                p.precio,
+                p.descripcion,
+                p.stock,
+                p.imagen,
+                p.disponible,
+                c.nombre AS categoria
+            FROM producto p
+            LEFT JOIN categoria c ON p.id_categoria = c.id
+            WHERE p.eliminado = false
+            ORDER BY p.id
+            """;
+
+        List<String> productos = new ArrayList<>();
+
+        try (Connection conexion = ConexionDB.getConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String categoria = rs.getString("categoria");
+
+                if (categoria == null) {
+                    categoria = "Sin categoría";
+                }
+
+                String producto = "Producto{" +
+                        "id=" + rs.getLong("id") +
+                        ", nombre='" + rs.getString("nombre") + '\'' +
+                        ", precio=" + rs.getDouble("precio") +
+                        ", descripcion='" + rs.getString("descripcion") + '\'' +
+                        ", stock=" + rs.getInt("stock") +
+                        ", imagen='" + rs.getString("imagen") + '\'' +
+                        ", disponible=" + rs.getBoolean("disponible") +
+                        ", categoria='" + categoria + '\'' +
+                        '}';
+
+                productos.add(producto);
+            }
+        }
+
+        return productos;
+    }
+
     public List<Producto> listarPorCategoria(Long idCategoria) throws SQLException {
         String sql = """
                 SELECT 
@@ -127,17 +166,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
                     p.imagen,
                     p.disponible,
                     p.eliminado AS producto_eliminado,
-                    p.created_at AS producto_created_at,
-                    c.id AS categoria_id,
-                    c.nombre AS categoria_nombre,
-                    c.descripcion AS categoria_descripcion,
-                    c.eliminado AS categoria_eliminado,
-                    c.created_at AS categoria_created_at
+                    p.created_at AS producto_created_at
                 FROM producto p
-                INNER JOIN categoria c ON p.id_categoria = c.id
                 WHERE p.eliminado = false
-                  AND c.eliminado = false
-                  AND c.id = ?
+                  AND p.id_categoria = ?
                 ORDER BY p.id
                 """;
 
@@ -160,6 +192,10 @@ public class ProductoDAO implements GenericDAO<Producto> {
 
     @Override
     public Producto actualizar(Producto producto) throws SQLException {
+        return actualizar(producto, obtenerIdCategoria(producto.getId()));
+    }
+
+    public Producto actualizar(Producto producto, Long idCategoria) throws SQLException {
         String sql = """
                 UPDATE producto
                 SET nombre = ?, precio = ?, descripcion = ?, stock = ?, imagen = ?, disponible = ?, id_categoria = ?
@@ -175,7 +211,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
             ps.setInt(4, producto.getStock());
             ps.setString(5, producto.getImagen());
             ps.setBoolean(6, producto.isDisponible());
-            ps.setLong(7, producto.getCategoria().getId());
+            ps.setLong(7, idCategoria);
             ps.setLong(8, producto.getId());
 
             int filas = ps.executeUpdate();
@@ -249,19 +285,6 @@ public class ProductoDAO implements GenericDAO<Producto> {
     }
 
     private Producto mapearProducto(ResultSet rs) throws SQLException {
-        Categoria categoria = new Categoria(
-                rs.getLong("categoria_id"),
-                rs.getString("categoria_nombre"),
-                rs.getString("categoria_descripcion")
-        );
-
-        categoria.setEliminado(rs.getBoolean("categoria_eliminado"));
-
-        Timestamp categoriaCreatedAt = rs.getTimestamp("categoria_created_at");
-        if (categoriaCreatedAt != null) {
-            categoria.setCreatedAt(categoriaCreatedAt.toLocalDateTime());
-        }
-
         Producto producto = new Producto(
                 rs.getLong("producto_id"),
                 rs.getString("producto_nombre"),
@@ -269,8 +292,7 @@ public class ProductoDAO implements GenericDAO<Producto> {
                 rs.getString("producto_descripcion"),
                 rs.getInt("stock"),
                 rs.getString("imagen"),
-                rs.getBoolean("disponible"),
-                categoria
+                rs.getBoolean("disponible")
         );
 
         producto.setEliminado(rs.getBoolean("producto_eliminado"));
@@ -281,6 +303,29 @@ public class ProductoDAO implements GenericDAO<Producto> {
         }
 
         return producto;
+    }
+
+    public Long obtenerIdCategoria(Long idProducto) throws SQLException {
+        String sql = """
+                SELECT id_categoria
+                FROM producto
+                WHERE id = ? AND eliminado = false
+                """;
+
+        try (Connection conexion = ConexionDB.getConexion();
+             PreparedStatement ps = conexion.prepareStatement(sql)) {
+
+            ps.setLong(1, idProducto);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    long idCategoria = rs.getLong("id_categoria");
+                    return rs.wasNull() ? null : idCategoria;
+                }
+            }
+        }
+
+        return null;
     }
 
     public boolean existenProductosActivosPorCategoria(Long idCategoria) throws SQLException {

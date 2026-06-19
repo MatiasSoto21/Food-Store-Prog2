@@ -9,13 +9,12 @@ public class Producto extends Base {
     private int stock;
     private String imagen;
     private boolean disponible;
-    private Categoria categoria;
 
     public Producto() {
         super();
     }
 
-    public Producto(String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible, Categoria categoria) {
+    public Producto(String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible) {
         super();
         setNombre(nombre);
         setPrecio(precio);
@@ -23,10 +22,9 @@ public class Producto extends Base {
         setStock(stock);
         setImagen(imagen);
         setDisponible(disponible);
-        setCategoria(categoria);
     }
 
-    public Producto(Long id, String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible, Categoria categoria) {
+    public Producto(Long id, String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible) {
         super(id);
         setNombre(nombre);
         setPrecio(precio);
@@ -34,7 +32,6 @@ public class Producto extends Base {
         setStock(stock);
         setImagen(imagen);
         setDisponible(disponible);
-        setCategoria(categoria);
     }
 
     public String getDescripcion() {
@@ -93,14 +90,6 @@ public class Producto extends Base {
         this.imagen = imagen;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
-    }
-
     public boolean isDisponible() {
         return disponible;
     }
@@ -140,7 +129,6 @@ public class Producto extends Base {
                 ", stock=" + stock +
                 ", imagen='" + imagen + '\'' +
                 ", disponible=" + disponible +
-                ", categoria=" + (categoria != null ? categoria.getNombre() : "Sin categoría") +
                 '}';
     }
 }
