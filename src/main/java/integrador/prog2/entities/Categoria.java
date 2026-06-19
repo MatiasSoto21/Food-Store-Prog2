@@ -61,7 +61,6 @@ public class Categoria extends Base {
 
         if (!productos.contains(producto)) {
             productos.add(producto);
-            producto.setCategoria(this);
         }
     }
 
@@ -71,7 +70,6 @@ public class Categoria extends Base {
         }
 
         productos.remove(producto);
-        producto.setCategoria(null);
     }
 
     public void mostrarProductos() {

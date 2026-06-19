@@ -1,10 +1,8 @@
 package integrador.prog2.dao;
 
 import integrador.prog2.config.ConexionDB;
-import integrador.prog2.entities.Categoria;
-import integrador.prog2.entities.DetallePedido;
-import integrador.prog2.entities.Pedido;
-import integrador.prog2.entities.Producto;
+import integrador.prog2.entities.*;
+
 import integrador.prog2.enums.Estado;
 import integrador.prog2.enums.FormaPago;
 
@@ -279,13 +277,9 @@ public class PedidoDAO implements GenericDAO<Pedido> {
                     p.descripcion AS producto_descripcion,
                     p.stock,
                     p.imagen,
-                    p.disponible,
-                    c.id AS categoria_id,
-                    c.nombre AS categoria_nombre,
-                    c.descripcion AS categoria_descripcion
+                    p.disponible
                 FROM detalle_pedido dp
                 INNER JOIN producto p ON dp.id_producto = p.id
-                INNER JOIN categoria c ON p.id_categoria = c.id
                 WHERE dp.id_pedido = ?
                   AND dp.eliminado = false
                 ORDER BY dp.id
@@ -296,11 +290,6 @@ public class PedidoDAO implements GenericDAO<Pedido> {
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    Categoria categoria = new Categoria(
-                            rs.getLong("categoria_id"),
-                            rs.getString("categoria_nombre"),
-                            rs.getString("categoria_descripcion")
-                    );
 
                     Producto producto = new Producto(
                             rs.getLong("producto_id"),
@@ -309,8 +298,7 @@ public class PedidoDAO implements GenericDAO<Pedido> {
                             rs.getString("producto_descripcion"),
                             rs.getInt("stock"),
                             rs.getString("imagen"),
-                            rs.getBoolean("disponible"),
-                            categoria
+                            rs.getBoolean("disponible")
                     );
 
                     DetallePedido detalle = new DetallePedido(
