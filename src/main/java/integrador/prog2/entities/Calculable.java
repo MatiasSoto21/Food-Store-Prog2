@@ -1,4 +1,4 @@
-package integrador.prog2.interfaces;
+package integrador.prog2.entities;
 
 public interface Calculable {
     void calcularTotal();
