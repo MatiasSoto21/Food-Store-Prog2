@@ -26,10 +26,19 @@ public class Usuario extends Base {
 
 
     public Usuario() {
-        super(); // Llama al constructor de Base para inicializar createdAt y eliminado
+        super();
     }
 
-    // Constructor completo
+    public Usuario(String nombre, String apellido, String mail, String celular, String contraseña, Rol rol) {
+        super();
+        setNombre(nombre);
+        setApellido(apellido);
+        setMail(mail);
+        setCelular(celular);
+        setContraseña(contraseña);
+        setRol(rol);
+    }
+
     public Usuario(Long id, String nombre, String apellido, String mail, String celular, String contraseña, Rol rol) {
         super(id);
         setNombre(nombre);

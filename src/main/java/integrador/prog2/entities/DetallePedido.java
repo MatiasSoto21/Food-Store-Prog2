@@ -13,15 +13,15 @@ public class DetallePedido extends Base {
     public DetallePedido(int cantidad, double subtotal, Producto producto) {
         super();
         setCantidad(cantidad);
-        setProducto(producto);
         setSubtotal(subtotal);
+        setProducto(producto);
     }
 
-    public DetallePedido(int cantidad, Producto producto) {
-        super();
+    public DetallePedido(Long id, int cantidad, double subtotal, Producto producto) {
+        super(id);
         setCantidad(cantidad);
+        setSubtotal(subtotal);
         setProducto(producto);
-        this.subtotal = cantidad * producto.getPrecio();
     }
 
     public int getCantidad() {

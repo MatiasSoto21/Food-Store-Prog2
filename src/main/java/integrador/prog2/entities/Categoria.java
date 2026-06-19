@@ -21,6 +21,13 @@ public class Categoria extends Base {
         this.productos = new ArrayList<>();
     }
 
+    public Categoria(Long id, String nombre, String descripcion) {
+        super(id);
+        setNombre(nombre);
+        setDescripcion(descripcion);
+        this.productos = new ArrayList<>();
+    }
+
 
 
     public String getNombre() {
@@ -52,7 +59,10 @@ public class Categoria extends Base {
             throw new IllegalArgumentException("El producto no puede ser nulo");
         }
 
-        productos.add(producto);
+        if (!productos.contains(producto)) {
+            productos.add(producto);
+            producto.setCategoria(this);
+        }
     }
 
     public void eliminarProducto(Producto producto) {
@@ -61,6 +71,7 @@ public class Categoria extends Base {
         }
 
         productos.remove(producto);
+        producto.setCategoria(null);
     }
 
     public void mostrarProductos() {

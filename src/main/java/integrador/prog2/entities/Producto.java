@@ -9,12 +9,13 @@ public class Producto extends Base {
     private int stock;
     private String imagen;
     private boolean disponible;
+    private Categoria categoria;
 
     public Producto() {
         super();
     }
 
-    public Producto(String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible) {
+    public Producto(String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible, Categoria categoria) {
         super();
         setNombre(nombre);
         setPrecio(precio);
@@ -22,14 +23,18 @@ public class Producto extends Base {
         setStock(stock);
         setImagen(imagen);
         setDisponible(disponible);
+        setCategoria(categoria);
     }
 
-    public Producto(String nombre, double precio, int stock, String imagen) {
-        super();
+    public Producto(Long id, String nombre, double precio, String descripcion, int stock, String imagen, boolean disponible, Categoria categoria) {
+        super(id);
         setNombre(nombre);
         setPrecio(precio);
+        setDescripcion(descripcion);
         setStock(stock);
         setImagen(imagen);
+        setDisponible(disponible);
+        setCategoria(categoria);
     }
 
     public String getDescripcion() {
@@ -61,8 +66,8 @@ public class Producto extends Base {
     }
 
     public void setPrecio(double precio) {
-        if (precio <= 0) {
-            throw new IllegalArgumentException("El precio debe ser mayor a cero");
+        if (precio < 0) {
+            throw new IllegalArgumentException("El precio no puede ser negativo");
         }
 
         this.precio = precio;
@@ -86,6 +91,14 @@ public class Producto extends Base {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
 
     public boolean isDisponible() {
@@ -119,6 +132,15 @@ public class Producto extends Base {
 
     @Override
     public String toString() {
-        return "Producto{" + "id=" + getId() + ", nombre='" + nombre + '\'' + ", precio=" + precio + ", stock=" + stock + ", disponible=" + isDisponible() + ", imagen=" + (imagen != null ? imagen : "-") + '}';
+        return "Producto{" +
+                "id=" + getId() +
+                ", nombre='" + nombre + '\'' +
+                ", precio=" + precio +
+                ", descripcion='" + descripcion + '\'' +
+                ", stock=" + stock +
+                ", imagen='" + imagen + '\'' +
+                ", disponible=" + disponible +
+                ", categoria=" + (categoria != null ? categoria.getNombre() : "Sin categoría") +
+                '}';
     }
 }

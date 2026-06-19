@@ -23,8 +23,13 @@ public class Pedido extends Base implements Calculable {
         this.total = 0;
     }
 
-    public Pedido(LocalDate fecha, Estado estado, double total, FormaPago formaPago) {
-        super();
+    public Pedido(FormaPago formaPago) {
+        this();
+        setFormaPago(formaPago);
+    }
+
+    public Pedido(Long id, LocalDate fecha, Estado estado, double total, FormaPago formaPago) {
+        super(id);
         setFecha(fecha);
         setEstado(estado);
         setTotal(total);
@@ -88,8 +93,8 @@ public class Pedido extends Base implements Calculable {
             throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
         }
 
-        if (precioUnitario == null || precioUnitario <= 0) {
-            throw new IllegalArgumentException("El precio unitario debe ser mayor a cero");
+        if (precioUnitario == null || precioUnitario < 0) {
+            throw new IllegalArgumentException("El precio unitario no puede ser negativo");
         }
 
         producto.validarVenta(cantidad);
@@ -120,6 +125,15 @@ public class Pedido extends Base implements Calculable {
         }
 
         detalles.remove(detalle);
+        calcularTotal();
+    }
+
+    public void agregarDetalleExistente(DetallePedido detalle) {
+        if (detalle == null) {
+            throw new IllegalArgumentException("El detalle no puede ser nulo");
+        }
+
+        detalles.add(detalle);
         calcularTotal();
     }
 
