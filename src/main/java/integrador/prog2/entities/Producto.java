@@ -9,7 +9,7 @@ public class Producto extends Base {
     private int stock;
     private String imagen;
     private boolean disponible;
-    private Categoria categoria;
+    private Categoria categoria;//no va categoria en producto, es unidireccional
 
     public Producto() {
         super();
