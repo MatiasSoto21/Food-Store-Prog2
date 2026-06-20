@@ -12,7 +12,9 @@ Trabajo Práctico Integrador de Programación II.
 
 Food Store es una aplicación de consola desarrollada en Java 21 para gestionar categorías, productos, usuarios y pedidos de un negocio de comidas.
 
-El sistema utiliza Programación Orientada a Objetos, patrón DAO, servicios, JDBC y MySQL. Toda la interacción se realiza mediante menú de consola.
+El sistema utiliza Programación Orientada a Objetos, patrón DAO, capa de servicios, JDBC y MySQL. Toda la interacción se realiza mediante un menú de consola, sin frontend, sin API REST y sin login.
+
+El proyecto permite realizar operaciones CRUD completas y persistir la información en una base de datos relacional MySQL.
 
 ## Tecnologías utilizadas
 
@@ -80,7 +82,7 @@ Si MySQL tiene contraseña, modificar `PASSWORD`.
 
 ## Cómo ejecutar
 
-1. Abrir el proyecto en IntelliJ IDEA.
+1. Abrir el proyecto en IntelliJ IDEA/Netbeans.
 2. Cargar dependencias Maven.
 3. Ejecutar `schema.sql` en MySQL Workbench.
 4. Ejecutar la clase:
@@ -100,14 +102,19 @@ El sistema permite realizar operaciones CRUD desde consola sobre:
 
 También permite:
 
+- Crear productos asociados a una categoría válida.
+- Listar productos mostrando su categoría asociada mediante consulta SQL.
+- Editar productos manteniendo valores anteriores al presionar Enter.
 - Crear pedidos con uno o más detalles.
 - Calcular subtotales y total del pedido.
 - Descontar stock al crear pedidos.
 - Restaurar stock al eliminar pedidos.
 - Realizar baja lógica mediante el campo eliminado.
 - Listar pedidos con usuario asociado.
-- Ver detalles de un pedido.
+- Ver detalles completos de un pedido.
+- Actualizar estado y forma de pago de un pedido.
 - Validar stock insuficiente.
+- Validar que un producto esté disponible antes de agregarlo a un pedido.
 - Impedir la eliminación de categorías con productos activos asociados.
 - Validar mail único para usuarios.
 - Validar precio y stock no negativos.
@@ -115,10 +122,13 @@ También permite:
 ### Reglas de negocio implementadas
 - No se permite crear productos con precio negativo.
 - No se permite crear productos con stock negativo.
+- No se permite crear productos sin categoría válida.
 - No se permite crear pedidos sin usuario.
 - No se permite crear pedidos sin detalles.
 - No se permite agregar detalles con cantidad menor o igual a cero.
 - No se permite vender productos sin stock suficiente.
+- No se permite agregar productos no disponibles a un pedido.
+- No se permite crear usuarios con mail repetido.
 - No se permite eliminar una categoría si tiene productos activos asociados.
 - Las eliminaciones se realizan mediante baja lógica.
 
