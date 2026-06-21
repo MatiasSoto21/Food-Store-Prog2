@@ -137,10 +137,9 @@ También permite:
 Link del video:
 
 ```text
-PENDIENTE
+https://www.youtube.com/watch?v=8ertLr9ieKE
 ```
 
 ## Documentación PDF
 
 La documentación académica se adjunta en la entrega final.
-https://www.youtube.com/watch?v=8ertLr9ieKE
