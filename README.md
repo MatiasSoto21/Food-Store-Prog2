@@ -6,7 +6,7 @@ Trabajo Práctico Integrador de Programación II.
 
 - Matías Soto
 - Guillermo Pinto
-- Franco Astorani
+- Franco Storani
 
 ## Descripción
 
@@ -143,3 +143,4 @@ PENDIENTE
 ## Documentación PDF
 
 La documentación académica se adjunta en la entrega final.
+https://www.youtube.com/watch?v=8ertLr9ieKE
