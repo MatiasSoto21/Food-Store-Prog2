@@ -6,7 +6,7 @@ Trabajo Práctico Integrador de Programación II.
 
 - Matías Soto
 - Guillermo Pinto
-- Franco Astorani
+- Franco Storani
 
 ## Descripción
 
@@ -137,7 +137,7 @@ También permite:
 Link del video:
 
 ```text
-PENDIENTE
+https://www.youtube.com/watch?v=8ertLr9ieKE
 ```
 
 ## Documentación PDF
